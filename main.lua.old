@@ -1,67 +1,10 @@
 
 game._brokenpc = 0; --номер сломаного компа
-NUM_QUESTS = 4; --общее число мини-квестов
-game._quests=0; --число выполненных квестов
-
 
 -- триггеры квестов, включаются по ходу игры, динамически
-game._weatherquest = false; -- мини-квест с погодой
-game._eatingquest = false; -- мини квест "похавать"
 game._mainquest = false; -- главный мега-квест
 game._makecopyquest = false; -- мини-квест "ксерокопирование"
 game._pcfixing = false; -- мини-квест "починка компа"
-
-kab6 = room {
-	enter = function()
-		lifeon('cophumlife');
-		return 'Я в кабинете № 6';
-	end,
-	exit = function()
-		lifeoff('cophumlife');
-		return;
-	end,
-	nam='Кабинет №6',
-	dsc = 'Это мой кабинет, но кроме меня тут еще сидят бухи и главбух',
-	obj = {'tabl','mfu1','hp1300','kor1door','copyhuman','cophumlife'},
-	way = {'koridor1','main'},
-};
-
-weatherpaper=obj{
-	nam = 'Распечатка погоды',
-	_fromgoogle=false;
-	_correct=false;
-	dsc = function()
-		return 'В принтере лежит {распечатка погоды}';
-	end,
-	act = 'Это распечатка погоды, директор попросил',
-	tak = 'Я взял распечатку погоды.',
-	inv = 'Прогноз погоды на ближайшие дни.',
-}:disable();
-
-seeweather = function()
-	if game._weatherquest then
-		return goto('weather');
-	else
-		weatherpaper._fromgoogle=false;
-		return 'Мне нечего искать в поисковике';
-	end;
-end;
-
-hp1300 = obj {
-	nam = 'Принтер',
-	dsc = '^^Около главбуха стоит {принтер}.',
-	act = 'Принтер HP LJ 1300, старенький но работает',
-	obj = {'weatherpaper'},
-};
-
-tabl = obj{
-	nam = 'Стол',
-	dsc = 'В кабинете стоит мой {стол} с компьютером',
-	act = function()
-		return goto('main');
-	end,
-	obj = {'yashik'},
-};
 
 mfu1 = obj{
 	_fixed = false;
@@ -85,61 +28,6 @@ mfu1 = obj{
 	obj = {'mfucover'},
 };
 
-mfuscene = room {
-	_copymode= false;
-	enter = 'На лицевой панели МФУ располагаются органы управления',
-	nam = 'ксерокопирование',
-	act = function(s,w)
-		if w==1 then
-			s._copymode = not s._copymode;
-			if s._copymode then return 'Режим работы - копирование';
-			else return 'Режим работы - сканирование';
-			end;
-		end;
-		if w==2 then
-			if mfucover._opened then
-				return 'Крышка МФУ открыта, в этом состоянии он не будет работать';
-			else
-				if mfu1._paperinside then
-					return 'Кажется внутри зажевана бумага, сначала надо ее вытащить.';
-				else
-					if s._copymode then
-						if mfu1._fixed then
-							if game._makecopyquest then
-								game._quests=game._quests+1;
-								game._makecopyquest = false;
-								mfu1.fixed = false;
-								back();
-								inv():del('sheetpaper');
-								copyhuman:disable();
-								game._MFUvoid = false;
-								return 'Ну все, кажется копия успешно снялась, УРА!';
-							else 
-								back();
-								inv():del('sheetpaper');
-								return 'Копия успешно снялась!';
-							end;
-						else 
-							mfu1._paperinside = true;
-							return 'Ну вот, МФУ зажевал бумагу. Он очень старый я ведь предупреждал.';
-						end;
-					else
-						return 'МФУ стоит в режиме сканирования. В этом режиме копии не снимаются.';
-					end;
-				end;
-			end;
-		end;
-		if w==3 then
-			return 'Я настроил изображение получше. Но кажется и так было неплохо. '
-		end;
-	end,
-	obj = {
-		vobj(1,'кнопка 1','{Кнопка} переключения режима.^'),
-		vobj(2,'кнопка 2','{Кнопка} копирования.^'),
-		vobj(3,'кнопки ','{Кнопки} настройки изображения.^'),
-	},
-	way = {'kab6'},
-};
 
 mfucover = obj{
 	_opened = false;
@@ -187,10 +75,7 @@ badpaper = obj {
 	
 }:disable();
 
-sheetpaper = obj{
-	nam = 'какой-то документ',
-	inv = 'Этот документ мне дали чтобы снять с него копию.',
-};
+
 
 bolt = obj{
 	nam = 'болт',
