@@ -3,101 +3,7 @@ game._brokenpc = 0; --номер сломаного компа
 
 -- триггеры квестов, включаются по ходу игры, динамически
 game._mainquest = false; -- главный мега-квест
-game._makecopyquest = false; -- мини-квест "ксерокопирование"
 game._pcfixing = false; -- мини-квест "починка компа"
-
-mfu1 = obj{
-	_fixed = false;
-	_paperinside = false;
-	nam = 'Sharp AL-1217',
-	dsc = 'Рядом со столом стоит старое {МФУ} Sharp.',
-	used = function(s,w)
-		if w=='sheetpaper' then
-			return goto('mfuscene');
-		else return 'Ну и зачем?';
-		end;
-	end;
-	act = function(s)
-			local l='';
-			if s._paperinside then	
-				mfucover:enable();
-				l='Осмотрев МФУ, сбоку я обнаружил крышку.';
-			end;
-			return 'Старая МФУ-шка, уже снятая с производства, модель Sharp AL-1217. '..l;
-	end,
-	obj = {'mfucover'},
-};
-
-
-mfucover = obj{
-	_opened = false;
-	nam = 'крышка от мфу',
-	dsc = function(s)
-		if s._opened then
-			return '{Крышка} МФУ открыта.';
-		else return 'Сбоку у МФУ есть {крышка}.';
-		end;
-	end,
-	act = function(s,w)
-		if w==1 then
-			if not s._opened then
-				s._opened = true;
-				bolt:enable();
-				if mfu1._paperinside then badpaper:enable(); end;
-				return 'Я нажал на защелку, крышка открылась.';
-			else return 'Крышка уже открыта, ни к чему нажимать на защелку.';
-			end;
-		else 
-			if s._opened then
-				s._opened=false;
-				if mfu1._paperinside then badpaper:disable(); end;
-				bolt:disable();
-				return 'Я захлопнул крышку';
-			else return 'Крышка закрыта.';
-			end;
-		end;
-	end,
-	obj = {
-		vobj(1,'защелка','Крышка закрывается посредством {защелки}.'),
-		'bolt',
-		'badpaper'
-	},
-}:disable();
-
-badpaper = obj {
-	nam = 'смятый лист',
-	dsc = 'В механизме виден смятый {лист бумаги}.',
-	act = function(s)
-		s:disable();
-		mfu1._paperinside = false;
-		return 'Я вытащил помятый лист из механизма';
-	end,
-	
-}:disable();
-
-
-
-bolt = obj{
-	nam = 'болт',
-	dsc = 'Рассмотрев внутренности МФУ я заметил один выделяющийся {болт}, который держит механизм.',
-	act = function()
-		if mfu1._fixed then
-			return 'Отрегулированный болт, может быть теперь бумага не будет зажевываться.';
-		else return 'Болт, держит механизм прохода бумаги. Его бы подрегулировать.';
-		end;
-	end,
-	used = function(s,w)
-		if mfu1._fixed then
-			return 'Я уже отрегулировал болт, лучше к нему теперь не лезть.';
-		else
-			if w=='otvertka' then
-				mfu1._fixed=true;
-				return 'Я подрегулировал болт, кажется теперь не должно зажевывать.';
-			else return 'Боюсь этим тут не поможешь.';
-			end;
-		end;
-	end,
-}:disable();
 
 badpcdlg = dlg{
 	nam = 'сломался комп',
@@ -261,7 +167,7 @@ copydlg = dlg{
 	[2]=_phr('А при чем тут я - ксерокс находится в 4м кабинете.','Да, но в нём закончился тонер',[[pon(4);game._MFUvoid = true;]]),
 	[3]=_phr('Ксерокс у нас находится в 4м кабинете.','Тот ксерокс занят и надолго.',[[pon(4);game._MFUvoid = false;]]),
 	[4]=_phr('Хм.. странно, только что вроде все было нормально...','Можно использовать этот ксерокс? (показывает на МФУ возле моего стола)',[[pon(5);]]),
-	[5]=_phr('Это плохой ксерокс, он жует бумагу, но можно попробовать.','Копи нужна очень срочно! Вот этот документ.',[[inv():add('sheetpaper');pon(6);game._makecopyquest = true;return back()]]),
+	[5]=_phr('Это плохой ксерокс, он жует бумагу, но можно попробовать.','Копия нужна очень срочно! Вот этот документ.',[[inv():add('sheetpaper');pon(6);game._makecopyquest = true;return back()]]),
 	[6]=_phr('Вы все еще тут?','Да, нельзя ли побыстрее, копия нужна срочно!'),
 	},
 },
