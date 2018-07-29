@@ -1,8 +1,8 @@
 obj {
-    verb = 'сфоткать на мобильник';
+    verb = 'фотать на мобильник';
     nam = 'mobile';
     disp = 'мобильник';
-    inv = 'Это мой мобильник Motorolla C650, старенький, такие сейчас не в моде.';  
+    inv = 'Это мой мобильник Motorolla C650, старенький, такие уже давно не в моде.';  
 };
 
 stat {
@@ -17,7 +17,7 @@ stat {
 
 obj {
     nam = 'box';
-    disp = 'Ящик стола';
+    disp = 'ящик стола';
     dsc = function (s)
             p "Выдвижной {ящик} в столе";
             if s:closed() then
@@ -35,6 +35,9 @@ obj {
                 s:close();
                 p 'Я закрыл ящик.';
             end;
+    end;
+    used = function(s, f)
+    -- TODO put object in box
     end;
     obj =  {'turn_screw','thermal_compound','lubricant'};
 }:close();
@@ -59,7 +62,6 @@ obj {
 
 obj {
     verb = 'смазать';
-
     nam = 'lubricant';
     disp = 'смазка';
     dsc = '{смазка}';
