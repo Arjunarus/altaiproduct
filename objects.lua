@@ -36,9 +36,9 @@ obj {
                 p 'Я закрыл ящик.';
             end;
     end;
-    used = function(s, f)
     -- TODO put object in box
-    end;
+    -- used = function(s, f)
+    -- end;
     obj =  {'turn_screw','thermal_compound','lubricant'};
 }:close();
 

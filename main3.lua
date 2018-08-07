@@ -1,5 +1,5 @@
 -- $Name: Приключения эникейщика в ООО "Молоко"$
--- $Version: 0.2$
+-- $Version: 0.3$
 -- $Author: ArjunaRus - http://vk.com/arjunarus $
 
 require "dbg"
@@ -7,6 +7,7 @@ require "fmt"
 
 include "objects"
 include "rooms"
+include "dialogs"
 
 fmt.para = true
 
@@ -38,7 +39,7 @@ game.use = function(s,w)
         'Наркоман штоле...',
         'Да вы что, это же ' .. w.disp .. '!',
         'И чем нам тут поможет ' .. w.disp .. '?',
-        'Можно конечно ' .. w.verb .. ', хм... думаешь поможет?',
+        'Можно конечно ' .. w.verb .. ', хм... думаете поможет?',
         'Ну конечно, давайте все ' .. w.verb .. '!'
     });
 end;
