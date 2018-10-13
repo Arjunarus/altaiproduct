@@ -5,10 +5,6 @@
 require "dbg"
 require "fmt"
 
-include "objects"
-include "rooms"
-include "dialogs"
-
 fmt.para = true
 
 -- Defaults
@@ -44,15 +40,21 @@ game.use = function(s,w)
     });
 end;
 
+include "objects"
+include "rooms"
+include "dialogs"
+
+-- Load saved state
 function start(load)
 end;
 
 global {
-    _needWeather = false;
+    _needWeather = true;
     _dirtyHands = true;
 }
 
 function init()
+    -- TODO
 end;
 
 
