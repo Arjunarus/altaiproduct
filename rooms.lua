@@ -15,9 +15,9 @@ room {
     obj {
         dsc = '{Желаю приятного квеста!}';
         act = function()
-            take('achivs');
+            take('status');
             take('mobile');
-            -- take('weatherPaper')
+            take('someDocument');
             walk('wplace');
         end;
     };
@@ -41,6 +41,7 @@ room {
 }:with {
     obj {
         nam = 'монитор';
+        disp = 'монитор';
         dsc = [[На столе стоит небольшой {монитор}.]];
         act = pfn(walkin, 'screen');
     };
@@ -69,16 +70,126 @@ room {
 }:with {
     obj {
         nam = 'mfp_1';
-        act = [[Старая МФУ-шка, уже снятая с производства, модель Sharp AL-1217.]];
-        -- TODO
+        disp = 'МФУ';
+        dsc = function(s)
+            if lookup('someDocument', s) ~= nil then
+                p('В сканере МФУ находится {someDocument|какой-то документ}.');
+            end;
+        end;
+        
+        act = function(s)
+            if not disabled('jammedPaper') and disabled('mfpInside') then
+                enable('mfpInside');
+                return 'Осмотрев МФУ, сбоку я обнаружил крышку.';
+            elseif lookup('someDocument', s) ~= nil then
+                walkin('mfuPanel');
+                return;
+            else
+                p [[Старая МФУ-шка, уже снятая с производства, модель Sharp AL-1217.]];
+            end;
+        end;
+        
+        used = function(s, w)
+            if w.nam == 'someDocument' then
+                p('Я поместил ' .. w.disp .. ' внутрь МФУ на стекло сканера.');
+                place(w, s);
+            else
+                p(rndItem({
+                    'Хотите ' .. w.verb .. ' МФУ? Хм... ну не знаю, не знаю...',
+                    'Можно конечно ' .. w.verb .. ' МФУ, но непонятно что делать потом..'
+                }));
+            end;
+        end;
+        
+    }:with {
+        obj {
+            nam = 'mfpInside';
+            fixed = false;
+            
+            -- TODO
+            dsc = function(s)
+                if s:closed() then
+                    return '{Крышка} МФУ закрыта. Она защелкивается на {lock|защелку}.';
+                else
+                    return '{Крышка} МФУ открыта. Внутри МФУ выделяется один {screw|болт}, который держит механизм.';
+                end;
+            end;
+            
+            act = function(s)
+                if s:closed() then
+                    return 'Крышка закрыта.';
+                else
+                    s:close();
+                    return 'Я захлопнул крышку';
+                end;
+            end;
+            
+            obj = {
+                obj {
+                    nam = 'lock';
+                    disp = 'защелка';
+                    
+                    act = function(s)
+                        p 'Я нажал на защелку, крышка открылась.';
+                        -- open('mfpInside');
+                    end;
+                };
+                
+                obj {
+                    nam = 'screw';
+                    disp = 'болт';
+                    
+                    act = function(s)
+                        if _'mfpInside'.fixed then
+                            return 'Отрегулированный болт, может быть теперь бумага не будет зажевываться.';
+                        else 
+                            return 'Болт держит механизм прохода бумаги. Его бы подрегулировать..';
+                        end;
+                    end;
+                    
+                    used = function(s, w)
+                        if w.nam == 'turn_screw' then
+                            if (_'mfpInside'.fixed) then
+                                return 'Я уже отрегулировал болт, лучше к нему теперь не лезть.';
+                            end;
+                            
+                            _'mfpInside'.fixed = true;
+                            return 'Я подрегулировал болт, кажется теперь не должно зажевывать.';
+                        else 
+                            return 'Предлагаете ' .. w.verb .. ' болт? Мдя... его надо подрегулировать, а не ' .. w.verb .. '!';
+                        end;
+                    end;
+                };
+            };
+            
+        }:disable():close();
+        
+        obj {
+            nam = 'jammedPaper';
+            disp = 'смятый лист';
+            dsc = function(s)
+                if not closed('mfpInside') and not disabled('mfpinside') then
+                    return 'В механизме виден смятый {лист бумаги}.';
+                end;
+            end;
+            
+            act = function(s)
+                disable(s);
+                return 'Я вытащил помятый лист из механизма';
+            end;
+        }:disable();
     };
+    
     obj {
         nam = 'стол';
+        disp = 'рабочий стол';
         act = pfn(walk, 'wplace');
         obj = {'box'};
     };
+    
     obj {
         nam = 'принтер';
+        disp = 'принтер';
         act = [[Принтер HP LJ 1300, старенький, но работает]];
     };
 };
@@ -403,8 +514,9 @@ room {
         
         act = function(s)
             if not _dirtyHands then
+                achievs.eat = true;
+                updateStat(achievs);
                 return 'Я поел, теперь можно спокойно работать дальше';
-                -- TODO achievs++
             else
                 return 'Я же не буду есть с грязными руками, так и заболеть можно!';
             end;
@@ -518,7 +630,7 @@ room {
     nam = 'porch';
     disp = 'Подъезд';
     dsc = 'Это можно назвать подъездом, тут ничего интересного';
-    decor = [[Сбоку расположены {#ступеньки|ступеньки}, ведущие наверх.]];
+    decor = [[Слева расположены {#ступеньки|ступеньки}, ведущие наверх.]];
     
     enter = function(s,f)
         if f.nam == 'main_enter' then
@@ -546,7 +658,7 @@ room {
     disp = 'Площадка второго этажа';
     dsc = 'Я попал на лестничную площадку 2-го этажа.';
     decor = [[Прямо передо мной {#дверь|дверь} ведущая в помещения втрого этажа.^
-        Сбоку от меня находится {лестница|лестница} на крышу.^
+        Слева от меня находится {лестница|лестница} на крышу.^
         Позади меня {#ступеньки|ступеньки}, ведущие вниз.
     ]];
     

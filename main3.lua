@@ -13,6 +13,17 @@ rndItem = function(table)
     return table[rnd(#table)];
 end;
 
+updateStat = function(statTable)
+    local res = 0;
+    for key, value in pairs(statTable) do
+        if value == true then 
+            res = res + 1; 
+        end;
+    end;
+    
+    statTable.count = res;
+end;
+
 game.act = 'Ничего не происходит';
 
 game.inv = function(s,w)
@@ -32,13 +43,27 @@ game.use = function(s,w)
         'Не пойму как это тут применить..',
         'Ну и причем тут ' .. w.disp .. '?',
         'Не срабатывает.',
-        'Наркоман штоле...',
+        'Засунуть туда? Наркоман штоле... О_о',
         'Да вы что, это же ' .. w.disp .. '!',
         'И чем нам тут поможет ' .. w.disp .. '?',
         'Можно конечно ' .. w.verb .. ', хм... думаете поможет?',
-        'Ну конечно, давайте все ' .. w.verb .. '!'
+        'Ну конечно, вам лишь бы все ' .. w.verb .. '!'
     });
 end;
+
+global {
+    _needWeather = true;
+    _dirtyHands = true;
+    achievs = {
+        count = 0,
+        
+        eat = false,
+        weather = false,
+        copy = false,
+        fix = false,
+        main = false
+    };
+};
 
 include "objects"
 include "rooms"
@@ -47,11 +72,6 @@ include "dialogs"
 -- Load saved state
 function start(load)
 end;
-
-global {
-    _needWeather = true;
-    _dirtyHands = true;
-}
 
 function init()
     -- TODO

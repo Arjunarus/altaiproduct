@@ -2,11 +2,10 @@ require "table"
 require "string"
 
 stat {
-    _value = 0;
-    
-    nam = 'achivs';
-    disp = function(s) 
-        return 'Достижения: ' .. s._value .. "^";
+    nam = 'status';
+    disp = function()
+        pn('Достижения: ' .. achievs.count);
+        pn('==============');
     end;
 };
 
@@ -50,15 +49,29 @@ obj {
     
     used = function(s, f)
         if s:closed() then
-            return game.use(s, f);
+            p 'Ящик закрыт, если что.';
+            return false;
         else
             p 'Поместим-ка, пожалуй, это в ящик.'
             place(f, s);
         end;
     end;
     
-    obj =  {'turn_screw','thermal_compound','lubricant'};
+    obj =  {
+        'turn_screw', 
+        'thermal_compound', 
+        'lubricant'
+    };
 }:close();
+
+obj {
+	nam = 'someDocument';
+    disp = 'какой-то документ';
+    verb = 'завернуть';
+    
+	inv = 'Этот документ мне дали чтобы снять с него копию.';
+    tak = 'Я взял документ.';
+};
 
 obj {
     nam = 'weatherPaper';
