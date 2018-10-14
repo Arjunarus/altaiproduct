@@ -98,3 +98,31 @@ obj {
     tak = 'Я взял смазку.';
     inv = 'Это смазка, чтобы кулеры не гудели (а не то, что вы подумали).';
 };
+
+obj {
+    nam = 'sink';
+    disp = 'раковина',
+    
+    act = function()
+        if _dirtyHands then
+            _dirtyHands = false;
+            return 'Я вымыл руки.';
+        else
+            return 'Руки еще не замарались, зачем их так часто мыть?';
+        end;
+
+    end,
+};
+
+obj {
+    nam = 'pan';
+    disp = 'унитаз';
+    
+    act = function()
+        if not _'#wckey':closed() then
+            return 'А вдруг кто-нибудь зайдет и увидит?';
+        else
+            return 'Вообще-то, я пока не хочу в туалет';
+        end;
+    end;
+};
