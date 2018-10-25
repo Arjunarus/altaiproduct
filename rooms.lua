@@ -17,7 +17,6 @@ room {
         act = function()
             take('status');
             take('mobile');
-            take('someDocument');
             walk('wplace');
         end;
     };
@@ -59,6 +58,12 @@ room {
         if f.nam == 'wplace' then
             return 'Я встал из-за стола.';
         end;
+        
+        -- Enable copy woman in 2 times from 10 entering
+        if rnd(10) % 5 == 0 and not achievs.copy then
+            enable('copyWoman');
+        end;
+        
         return 'Я в кабинете № 6.';
     end;
 
@@ -181,6 +186,23 @@ room {
         }:disable();
     };
 
+    obj {
+        nam = 'copyWoman',
+        disp = 'сотрудница';
+        dsc = function()
+            if have('someDocument') or lookup('someDocument', 'mfp_1') ~= nil then
+                p 'В кабинете находится {сотрудница}, которой нужна копия документа.';
+            else
+                p 'В кабинет пришла {сотрудница} кажется ей что-то от меня нужно.';
+            end;
+        end;
+        
+        act = function()
+            walkin('copyDlg');
+        end,
+
+    }:disable();
+    
     obj {
         nam = 'стол';
         disp = 'рабочий стол';
