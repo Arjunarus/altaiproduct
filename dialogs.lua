@@ -117,22 +117,24 @@ dlg {
             function()
                 p 'Я нажал кнопку копирования...^^';
                 
-                if not _'mfuPanel'.copyMode then
-                    p 'МФУ стоит в режиме сканирования. В этом режиме копии не снимаются.';
-                -- elseif mfpInside._opened then
-                    -- p 'Крышка МФУ открыта, в этом состоянии он не будет работать';
-                -- elseif  isMfp1Jammed() then
-                    -- p 'Кажется внутри зажевана бумага, сначала надо ее вытащить.';
-                elseif not _'mfpInside'.fixed then
-                    enable('jammedPaper');
-                    p 'Ну вот, МФУ зажевал бумагу. Он очень старый я ведь предупреждал!';
+                if _'mfuPanel'.copyMode then
+                    if _'mfpCover'.opened then
+                        p 'Крышка МФУ открыта, в этом состоянии он не будет работать';
+                    elseif not disabled('jammedPaper') then
+                        p 'Кажется внутри зажевана бумага, сначала надо ее вытащить.';
+                    elseif not _'mfpCover'.fixed then
+                        enable('jammedPaper');
+                        p 'Ну вот, МФУ зажевал бумагу. Он очень старый я ведь предупреждал!';
+                    else
+                        remove('someDocument');
+                        _'mfpCover'.fixed = false -- 
+                        achievs.copy = true;
+                        updateStat(achievs);
+                        p 'Ну все, кажется копия успешно снялась, УРА!';
+                    end;
                     walkout();
                 else
-                    remove('someDocument');
-                    achievs.copy = true;
-                    updateStat(achievs);
-                    p 'Ну все, кажется копия успешно снялась, УРА!';
-                    walkout();
+                    p 'МФУ стоит в режиме сканирования. В этом режиме копии не снимаются.';
                 end;
             end,
         },

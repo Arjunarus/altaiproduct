@@ -5,7 +5,6 @@ stat {
     nam = 'status';
     disp = function()
         pn('Достижения: ' .. achievs.count);
-        pn('==============');
     end;
 };
 
