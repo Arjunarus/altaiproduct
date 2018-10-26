@@ -1,30 +1,21 @@
 require "noinv"
 
 putWeather = function(src, place)
-    if objs(cab6):srch(weatherPaper) == nil then
-        _needWeather = false;
-        local wPaper = weatherPaper;
-        wPaper._src = src;
-        wPaper._place = place;
-        objs(cab6):add(wPaper);
-    end;
-
-    return;
+    _'weatherPaper'.src = src;
+    _'weatherPaper'.place = place;
+    
+    enable('weatherPaper');
+    walkout();
 end;
 
 dlg {
     nam = 'screen';
-    disp = 'Экран монитора (еще не готов уходи отсюда)';
+    disp = 'Экран монитора';
     dsc = 'На экране запущен браузер. Я вижу перед собой несколько быстрых ссылок.';
 
     noinv = true;
-    src = nil;
-
-    printing = {'#weather', "Я ввожу в строке поиска ПОГОДА... На экране появляется несколько ссылок.",
-        {'Погода в России. Распечатать', {'Я пускаю погоду на печать.', function() putWeather(screen.src, 'Россия'); end }},
-        {'Погода в Москве. Распечатать', {'Я пускаю погоду на печать.', function() putWeather(screen.src, 'Москва'); end }},
-        {'Погода в Барнауле. Распечатать', {'Я пускаю погоду на печать.', function() putWeather(screen.src, 'Барнаул'); end }},
-    };
+    src = '';
+    place = '';
 
     phr = {
         {
@@ -41,37 +32,41 @@ dlg {
                 })
             end
         },
-        {always = true, 'livejournal.com', 'В ЖЖ ничего нового.'},
+
         {
             always = true,
-            'google.com', {
-                {'hui', 'jigurda1'},
-                {'pizda', 'jigurda2'}
-            }
-            -- function()
-                -- if _needWeather then
-                    -- return {"Я ввожу в строке поиска ПОГОДА... На экране появляется несколько ссылок.",
-                        -- {'Погода в России. Распечатать', {'Я пускаю погоду на печать.', function() putWeather(screen.src, 'Россия'); end }},
-                        -- {'Погода в Москве. Распечатать', {'Я пускаю погоду на печать.', function() putWeather(screen.src, 'Москва'); end }},
-                        -- {'Погода в Барнауле. Распечатать', {'Я пускаю погоду на печать.', function() putWeather(screen.src, 'Барнаул'); end }},
-                    -- }
-                -- else
-                    -- return rndItem({
-                        -- 'Я зашел в гугл.',
-                        -- 'Ну и чего будем искать?',
-                        -- 'Надо ввести запрос. Хм..',
-                        -- 'Погоду лучше смотреть в яндексе.'
-                    -- })
-                -- end
-            -- end
+            'livejournal.com',
+            'В ЖЖ ничего нового.'
+        },
+
+        {
+            always = true,
+
+            'google.com',
+            function()
+                if needWeather and disabled('weatherPaper') then
+                    _'screen'.src = 'Google';
+                    push('#weather');
+                else
+                    return rndItem({
+                        'Я зашел в гугл.',
+                        'Ну и чего будем искать?',
+                        'Надо ввести запрос. Хм..',
+                        'Погоду лучше смотреть в яндексе.'
+                    });
+                end
+            end,
+
+
         },
         {
             always = true,
             'yandex.ru',
+
             function()
-                if _needWeather then
-                    -- screen.src = 'Yandex';
-                    return screen.printing;
+                if needWeather and disabled('weatherPaper') then
+                    _'screen'.src = 'Yandex';
+                    push('#weather');
                 else
                     return rndItem({
                         'Я зашел в яндекс.',
@@ -81,12 +76,142 @@ dlg {
                 end
             end
         },
-        {};
 
-        -- {always = true, 'Назад', code = [[pret()]]}
+        {
+            '#weather',
+            hidden = true,
+
+            'Я ввожу в строке поиска ПОГОДА... На экране появляется несколько ссылок.',
+
+            {
+                always = true,
+                'Погода в России.',
+                function()
+                    _'screen'.place = 'Россия';
+                    push('#actions');
+                end
+            },
+
+            {
+                always = true,
+                'Погода в Москве.',
+                function()
+                    _'screen'.place = 'Москва';
+                    push('#actions');
+                end
+            },
+            
+            {
+                always = true,
+                'Погода в Новосибирске.',
+                function()
+                    _'screen'.place = 'Новосибирск';
+                    push('#actions');
+                end
+            },
+
+            {
+                always = true,
+                'Погода в Барнауле.',
+                function()
+                    _'screen'.place = 'Барнаул';
+                    push('#actions');
+                end
+            },
+            
+            {
+                always = true,
+                'Назад',
+                pfn(pop)
+            }
+        },
+        
+        {
+            '#actions',
+            hidden = true,
+            
+            {
+                always = true,
+                'Посмотреть',
+                function()
+                    if _'screen'.place == 'Барнаул' then
+                        p 'Я смотрю погоду, хмм... завтра будет тепло, можно будет погулять с Катей после работы.';
+                    else
+                        return rndItem({
+                            'Не знаю зачем мне смотреть погоду хрен пойми где.. ну да ладно.',
+                            'Я посмотрел погоду.',
+                            'Вроде обещают тепло.',
+                            'Через 2 дня будет дождь.',
+                            'Переменная облачность, без осадков.'
+                        });
+                    end;
+                end
+            },
+            
+            {
+                'Распечатать',
+                function()
+                    p 'Я пускаю погоду на печать.';
+                    putWeather(_'screen'.src, _'screen'.place);
+                end
+            },
+            
+            {
+                always = true,
+                'Назад',
+                pfn(pop)
+            }
+        }
     };
 
     way = {'wplace'};
+};
+
+dlg {
+    nam = 'weatherDlg';
+    disp = 'Разговор с директором';
+    dsc = 'Ну что принес погоду?';
+
+    noinv = true;
+
+    phr = {
+        only = true,
+
+        {
+            cond = function()
+                return have('weatherPaper')
+            end,
+
+            'Да принес вот держите.',
+            function()
+                p 'Хмм.. посмотрим.';
+
+                if _'weatherPaper'.place == 'Барнаул' and _'weatherPaper'.src == 'Yandex' then
+                    p 'Хорошо, то что надо, спасибо!'
+                    needWeather = false;
+                    achievs.weather = true;
+                    updateStat(achievs);
+                elseif _'weatherPaper'.place == 'Новосибирск' then
+                    p 'Предлагаешь поехать в Новосибирск на выходные?';
+                elseif _'weatherPaper'.src ~= 'Yandex' then
+                    p 'Что-то я тут нифига не понимаю, распечатай нашу погоду из Яндекса и принеси мне!';
+                end;
+                
+                if _'weatherPaper'.place ~= 'Барнаул' then
+                    p 'Ты что, забыл в каком городе мы живем??';
+                end;
+
+                disable('weatherPaper');
+                place('weatherPaper', 'hp_lj_1300')
+                walkout();
+            end
+        },
+
+        {
+            'Нет пока, еще не успел распечатать...',
+            'Ну давай быстрее!'
+        }
+    };
 };
 
 dlg {
@@ -111,7 +236,7 @@ dlg {
                 end;
             end,
         },
-		
+
         {
             always = true,
 
@@ -136,11 +261,11 @@ dlg {
                     disable('copyWoman')
                     p 'Ну все, кажется копия успешно снялась, УРА!';
                 end;
-                
+
                 walkout();
             end;
         },
-		
+
         {
             always = true,
             'Кнопки настройки изображения.',
@@ -171,7 +296,7 @@ dlg {
             cond = function()
                 return not have('someDocument');
             end;
-            
+
             'Чем-то помочь?',
             'Да, мне нужно отксерокопировать документ.',
 
@@ -211,6 +336,8 @@ dlg {
     noinv = true;
 
     phr = {
+        only = true,
+        
         {
             '#hello',
             'Здравствуйте!',
@@ -218,9 +345,9 @@ dlg {
         },
         {
             only = true,
-
+            
             cond = function()
-                return disabled('vegaFood')
+                return not achievs.eat;
             end,
 
             'А нельзя ли что-нибудь съесть?',
@@ -239,6 +366,15 @@ dlg {
                 'Спасибо!',
                 'На доброе здоровье!'
             };
+        },
+        
+        {
+            cond = function()
+                return achievs.eat
+            end,
+            
+            'Спасибо, было вкусно!',
+            'На доброе здоровье!'
         }
     };
 

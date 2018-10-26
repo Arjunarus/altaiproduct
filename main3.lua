@@ -52,8 +52,8 @@ game.use = function(s,w)
 end;
 
 global {
-    _needWeather = true;
-    _dirtyHands = true;
+    needWeather = false;
+    dirtyHands = true;
     achievs = {
         count = 0,
         

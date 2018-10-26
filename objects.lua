@@ -73,21 +73,6 @@ obj {
 };
 
 obj {
-    nam = 'weatherPaper';
-    disp = 'распечатка погоды';
-    dsc = 'В принтере лежит {распечатка погоды}.';
-    
-    _src = nil;
-    _place = nil;
-    verb = 'завернуть';
-
-    
-    act = 'Это распечатка погоды, директор попросил.';
-    tak = 'Я взял распечатку погоды.';
-    inv = 'Прогноз погоды на ближайшие дни.';
-};
-
-obj {
     nam = 'turn_screw';
     disp = 'отвертка';
     verb = 'раскрутить';
@@ -116,8 +101,8 @@ obj {
     disp = 'раковина',
     
     act = function()
-        if _dirtyHands then
-            _dirtyHands = false;
+        if dirtyHands then
+            dirtyHands = false;
             return 'Я вымыл руки.';
         else
             return 'Руки еще не замарались, зачем их так часто мыть?';
