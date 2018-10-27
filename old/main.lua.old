@@ -37,19 +37,6 @@ mainquestdlg = dlg{
 	end,
 };
 
-weatherquestdlg = dlg{
-	nam = 'главный квест',
-	dsc = 'Это снова звонит директор!',
-	obj = {
-		[1] = phr('Алло! Я слушаю.','Посмотри погоду в интернете, распечатай и принеси мне.','pon(2)'),
-		[2] = _phr('Хорошо, я понял.'),
-	},
-	exit = function()
-		lifeon('mobile');
-		return 'Хм... нужно найти прогноз погоды в интернете..';
-	end,
-};
-
 mobile = obj{
 	r=1;
 	--game._brokenpc=0;

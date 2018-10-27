@@ -52,8 +52,14 @@ game.use = function(s,w)
 end;
 
 global {
-    needWeather = false;
-    dirtyHands = true;
+    triggers = {
+        weather = false;
+        dirtyHands = true;
+        wantToEat = false;
+        needCopy = false;
+        romantic = false;
+    };
+    
     achievs = {
         count = 0,
         

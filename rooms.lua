@@ -18,6 +18,8 @@ room {
             take('status');
             take('mobile');
             walk('wplace');
+            lifeon();
+            lifeon('mobile', 1);
         end;
     };
 };
@@ -59,8 +61,8 @@ room {
             return 'Я встал из-за стола.';
         end;
         
-        -- Enable copy woman in 2 times from 10 entering
-        if rnd(10) % 5 == 0 and not achievs.copy then
+        -- Enable copy woman in 1 time from 5 entering
+        if rnd(5) % 3 == 0 and not achievs.copy then
             enable('copyWoman');
         end;
         
@@ -191,7 +193,7 @@ room {
         disp = 'сотрудница';
         dsc = function()
             if have('someDocument') or lookup('someDocument', 'mfp_1') ~= nil then
-                p 'В кабинете находится {сотрудница}, которой нужна копия документа.';
+                p '^В кабинете находится {сотрудница}, которой нужна копия документа.';
             else
                 p 'В кабинет пришла {сотрудница} кажется ей что-то от меня нужно.';
             end;
@@ -554,8 +556,9 @@ room {
         nam = 'vegaFood';
 
         act = function(s)
-            if not dirtyHands then
+            if not triggers.dirtyHands then
                 achievs.eat = true;
+                triggers.wantToEat = false;
                 updateStat(achievs);
                 p 'Я поел, теперь можно спокойно работать дальше';
                 disable('vegaFood');

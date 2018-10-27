@@ -1,13 +1,5 @@
 require "noinv"
 
-putWeather = function(src, place)
-    _'weatherPaper'.src = src;
-    _'weatherPaper'.place = place;
-    
-    enable('weatherPaper');
-    walkout();
-end;
-
 dlg {
     nam = 'screen';
     disp = 'Экран монитора';
@@ -44,7 +36,7 @@ dlg {
 
             'google.com',
             function()
-                if needWeather and disabled('weatherPaper') then
+                if triggers.weather and disabled('weatherPaper') then
                     _'screen'.src = 'Google';
                     push('#weather');
                 else
@@ -64,7 +56,7 @@ dlg {
             'yandex.ru',
 
             function()
-                if needWeather and disabled('weatherPaper') then
+                if triggers.weather and disabled('weatherPaper') then
                     _'screen'.src = 'Yandex';
                     push('#weather');
                 else
@@ -100,7 +92,7 @@ dlg {
                     push('#actions');
                 end
             },
-            
+
             {
                 always = true,
                 'Погода в Новосибирске.',
@@ -118,18 +110,18 @@ dlg {
                     push('#actions');
                 end
             },
-            
+
             {
                 always = true,
                 'Назад',
                 pfn(pop)
             }
         },
-        
+
         {
             '#actions',
             hidden = true,
-            
+
             {
                 always = true,
                 'Посмотреть',
@@ -147,15 +139,18 @@ dlg {
                     end;
                 end
             },
-            
+
             {
                 'Распечатать',
                 function()
                     p 'Я пускаю погоду на печать.';
-                    putWeather(_'screen'.src, _'screen'.place);
+                    _'weatherPaper'.src = _'screen'.src;
+                    _'weatherPaper'.place = _'screen'.place;
+                    enable('weatherPaper');
+                    walkout();
                 end
             },
-            
+
             {
                 always = true,
                 'Назад',
@@ -165,6 +160,98 @@ dlg {
     };
 
     way = {'wplace'};
+};
+
+dlg {
+    nam = 'kateDlg';
+	disp = 'Разговор с Катей';
+    dsc = 'Это звонит Катя, моя девушка!';
+    noinv = true;
+    exit = function()
+        if triggers.romantik then
+            p 'Здорово, сегодня я буду гулять с девушкой после работы! :3';
+        else
+            p 'Надеюсь, я не сильно её обидел..';
+        end;
+    end;
+    
+    phr = {
+        {
+            'Алло!',
+            'Привет! Как работа?',
+
+            only = true;
+            {
+                'Да нормально',
+                next = '#init'
+            },
+
+            {
+                'Да вот, только пришел, еще ничего не успел сделать',
+                next = '#init'
+            },
+
+            {
+                'Задолбало уже все',
+                next = '#init'
+            },
+
+            {
+                'Ох, поскорее бы домой!',
+                next = '#init'
+            }
+        },
+
+        {
+            hidden = true,
+            only = true,
+
+            '#init',
+            'Я тут подумала, может погуляем сегодня после работы?',
+
+            {
+                'Это отличная идея!',
+                'Тогда в семь часов на "Юности"?',
+                {
+                    'Да, давай на "Юности"',
+                    function()
+                        p 'Ура! Буду ждать!';
+                        triggers.romantik = true;
+                    end
+                }
+            },
+
+            {
+                'Сегодня у меня тренировка, погулять не смогу.',
+                'Понятно, ну хорошо тебе потренироваться!'
+            },
+
+            {
+                'Вообще, сегодня я хотел заняться своими делами.',
+                'Жаль, у тебя на меня постоянно нет времени!',
+                {
+                    'Извини, но у меня накопилась куча дел.',
+                    'Ну ладно, тогда пока..'
+                }
+            }
+        }
+    };
+};
+
+dlg {
+    nam = 'principalDlg_1';
+	disp = 'Разговор с директором';
+	dsc = 'Это звонит директор!';
+
+    phr = {
+        {
+            'Алло! Я слушаю.',
+            'Посмотри погоду в интернете, распечатай и принеси мне.',
+            {
+                'Хорошо, я понял.'
+            }
+        }
+    };
 };
 
 dlg {
@@ -188,7 +275,7 @@ dlg {
 
                 if _'weatherPaper'.place == 'Барнаул' and _'weatherPaper'.src == 'Yandex' then
                     p 'Хорошо, то что надо, спасибо!'
-                    needWeather = false;
+                    triggers.weather = false;
                     achievs.weather = true;
                     updateStat(achievs);
                 elseif _'weatherPaper'.place == 'Новосибирск' then
@@ -196,7 +283,7 @@ dlg {
                 elseif _'weatherPaper'.src ~= 'Yandex' then
                     p 'Что-то я тут нифига не понимаю, распечатай нашу погоду из Яндекса и принеси мне!';
                 end;
-                
+
                 if _'weatherPaper'.place ~= 'Барнаул' then
                     p 'Ты что, забыл в каком городе мы живем??';
                 end;
@@ -244,7 +331,7 @@ dlg {
             function()
                 p 'Я нажал кнопку копирования...^^';
 
-                if _'mfuPanel'.copyMode then
+                if not _'mfuPanel'.copyMode then
                     p 'МФУ стоит в режиме сканирования. В этом режиме копии не снимаются.';
                 elseif _'mfpCover'.opened then
                     p 'Крышка МФУ открыта, в этом состоянии он не будет работать';
@@ -258,7 +345,8 @@ dlg {
                     _'mfpCover'.fixed = false -- Only one copy is possible after fixing
                     achievs.copy = true;
                     updateStat(achievs);
-                    disable('copyWoman')
+                    disable('copyWoman');
+                    triggers.needCopy = false;
                     p 'Ну все, кажется копия успешно снялась, УРА!';
                 end;
 
@@ -285,7 +373,7 @@ dlg {
     phr = {
         {
             cond = function()
-                return have('someDocument');
+                return triggers.needCopy;
             end,
 
             'Вы все еще тут?',
@@ -294,7 +382,7 @@ dlg {
 
         {
             cond = function()
-                return not have('someDocument');
+                return not triggers.needCopy;
             end;
 
             'Чем-то помочь?',
@@ -314,6 +402,7 @@ dlg {
                         function ()
                             p '"Но мне нужна копия и очень срочно!" - с этими словами сотрудница вручила мне какой-то документ.'
                             take('someDocument');
+                            triggers.needCopy = true;
                             walkout();
                         end;
                     }
@@ -337,7 +426,7 @@ dlg {
 
     phr = {
         only = true,
-        
+
         {
             '#hello',
             'Здравствуйте!',
@@ -345,9 +434,9 @@ dlg {
         },
         {
             only = true,
-            
+
             cond = function()
-                return not achievs.eat;
+                return triggers.wantToEat;
             end,
 
             'А нельзя ли что-нибудь съесть?',
@@ -367,12 +456,12 @@ dlg {
                 'На доброе здоровье!'
             };
         },
-        
+
         {
             cond = function()
                 return achievs.eat
             end,
-            
+
             'Спасибо, было вкусно!',
             'На доброе здоровье!'
         }
