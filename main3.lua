@@ -13,6 +13,25 @@ rndItem = function(table)
     return table[rnd(#table)];
 end;
 
+inList = function(item, list)
+    for ind, val in ipairs(list) do
+        if val == item then
+            return true;
+        end;
+    end;
+    
+    return false;
+end;
+
+rndExcept = function(max, exceptions)
+    local res = 0;
+    repeat
+        res = rnd(max);
+    until not inList(res, exceptions);
+    
+    return res;
+end;
+
 updateStat = function(statTable)
     local res = 0;
     for key, value in pairs(statTable) do
@@ -58,6 +77,7 @@ global {
         wantToEat = false;
         needCopy = false;
         romantic = false;
+        mainTask = false;
     };
     
     achievs = {

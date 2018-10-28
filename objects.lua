@@ -16,7 +16,9 @@ obj {
     inv = function(this)
         if this.calling then
             this.selections[this.selector]();
-            this.selector = this.selector + 1;
+            if this.selector < #this.selections then
+                this.selector = this.selector + 1;
+            end;
             this.last_time = time();
             this.calling = false;
         else
@@ -25,7 +27,7 @@ obj {
     end;
     
     calling = false;
-    CALL_INTERVAL = 30;
+    CALL_INTERVAL = 25;
     selector = 1;
     last_time = 0;
     
@@ -39,6 +41,16 @@ obj {
             triggers.weather = true;
         end;
         
+        [3] = function()
+            local pos = string.sub(where('player').nam, -1);
+            dprint('My pos ' .. pos);
+            local cab = rndExcept(8, {2, pos});
+            
+            _'badPcDlg'.number = cab;
+            walkin('badPcDlg');
+            place('badpc', 'cab' .. cab);
+        end;
+        
     };
 
     life = function(this)
@@ -49,7 +61,7 @@ obj {
             this.calling = true;
         end;
         
-        if this.calling and rnd(time()) % 2 == 0 then
+        if this.calling then
             p 'У меня звонит мобильник!';
         end;
         
@@ -58,10 +70,32 @@ obj {
             triggers.wantToEat = true;
         end;
         
-        if triggers.wantToEat and rnd(time()) % 2 == 0 then
+        if triggers.wantToEat and rnd(time()) % 3 == 0 then
             p 'Что-то я проголодался, надо бы поесть...';
         end;
     end;
+};
+
+obj {
+    nam = 'badpc';
+    disp = 'сломанный комп';
+    dsc = 'Мне указывают на сломаный {комп} в кабинете.';
+    act = function(this)
+        -- TODO complex fixing
+        p 'Я починил комп';
+        achievs.fix = true;
+        updateStat(achievs);
+        remove('badpc');
+    end;
+    
+    power = false;
+    mother = false;
+    ram_1 = false;
+    ram_2 = false;
+    hard = false;
+    cpu = false;
+    cooler = false;
+    video = false;
 };
 
 obj {
