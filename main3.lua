@@ -78,6 +78,7 @@ global {
         needCopy = false;
         romantic = false;
         mainTask = false;
+        openTechFloor = false;
     };
     
     achievs = {
