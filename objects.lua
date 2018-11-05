@@ -44,11 +44,15 @@ obj {
         [3] = function()
             local pos = string.sub(where('player').nam, -1);
             dprint('My pos ' .. pos);
-            local cab = rndExcept(8, {2, pos});
+            local exclude_rooms = {};
+            where('badpc', exclude_rooms);
+            table.insert(exclude_rooms, 2);
+            table.insert(exclude_rooms, pos);
+            local cab = rndExcept(8, exclude_rooms);
             
             _'badPcDlg'.number = cab;
             walkin('badPcDlg');
-            place('badpc', 'cab' .. cab);
+            _('cab' .. cab).obj:add('badpc');
         end;
         
     };
@@ -197,7 +201,7 @@ obj {
 obj {
     nam = 'landline_phone';
     disp = 'дисковый телефон';
-    verb = 'позвонить';
+    verb = 'поставить';
     tak = function()
         if triggers.mainTask then
             p 'Пожалуй, мне он может понадобится. Я отсоединяю кабель и беру в руки аппарат.';
@@ -205,22 +209,62 @@ obj {
             p(rndItem({
                 'Если кому-то срочно понадобится сисадмин, он может вызвать его по внутреннему номеру.',
                 'Мне никого не нужно вызывать.',
-                'Честно говоря, я наших локальных номеров еще не помню - недавно на работу устроился.',
+                'Честно говоря, я местных локальных номеров еще не помню - недавно на работу устроился.',
                 'Можно попробовать набрать номер наугад и бросить трубку, но лучше не надо.',
                 'Внутренние номера, вроде, четырехзначные...'
             }));
             return false;
         end;
     end;
-    inv = 'Красный дисковый телефон. Такими пользовались еще в СССР. Сзади разьем для кабеля.';
+    inv = 'Красный кнопочный телефон с трубкой. Такими пользовались, наверное, еще в СССР. Сзади разьем для кабеля RJ11.';
 };
 
 obj {
     nam = 'handset';
-    disp = 'телефонная трубка';
+    disp = 'трубка';
     verb = 'подключить';
     tak = 'Я взял телефонную трубку';
     inv = 'Простая телефонная трубка, из которой торчат два провода';
+}; 
+
+obj {
+    nam = 'cable';
+    disp = 'кабель';
+    tak = 'Я взял телефонный кабель';
+    inv = 'Это стандартный телефонный кабель, с двумя коннекторами 6P4C.';
+    use = function(this, that)
+        if that^'landline_phone' then
+            p 'Я подсоединил кабель к телефону';
+            take('corded_phone');
+            remove('cable');
+            remove('landline_phone');
+        else
+            'Сюда такой кабель не подключишь.'
+        end;
+    end;
+};
+
+obj {
+    nam = 'corded_phone';
+    disp = 'телефон c кабелем';
+    verb = 'позвонить';
+    inv = 'Телефон с подсоединенным к нему кабелем. Теперь можно втыкать в телефонную розетку.';
+};
+
+obj {
+    nam = 'owner_tel';
+    disp = 'номер телефона';
+    tak = 'Мне дали номер арендодателя.';
+    inv = 'Это номер арендодателя, его Жанна дала.';
+    use = function(this, that)
+        if that^'mobile' then
+            walkin('ownerDlg');
+            p 'Я не уверен, что этот человек мне поможет.'; -- WTF? Why do not see this string?
+            remove('owner_tel');
+        else
+            p 'Так на номер не позвонишь.';
+        end;
+    end;
 };
 
 obj {

@@ -77,7 +77,7 @@ global {
         wantToEat = false;
         needCopy = false;
         romantic = false;
-        mainTask = false;
+        mainTask = true; -- true for debug purpose TODO change into false
         openTechFloor = false;
     };
     
@@ -88,6 +88,7 @@ global {
         weather = false,
         copy = false,
         fix = false,
+        romantic = false,
         main = false
     };
 };

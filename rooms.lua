@@ -35,7 +35,7 @@ room {
         end;
     end;
 
-    enter = function(s, f)
+    enter = function(this, f)
         if f.nam == 'cab6' then
             return 'Я сел на свое рабочее место.';
         end;
@@ -63,7 +63,7 @@ room {
         Рядом со столом стоит старое {mfp_1|МФУ Sharp}.
     ]];
 
-    enter = function(s, f)
+    enter = function(this, f)
         if f.nam == 'wplace' then
             return 'Я встал из-за стола.';
         end;
@@ -85,17 +85,17 @@ room {
     obj {
         nam = 'mfp_1';
         disp = 'МФУ';
-        dsc = function(s)
-            if lookup('someDocument', s) ~= nil then
+        dsc = function(this)
+            if lookup('someDocument', this) ~= nil then
                 p('В сканере МФУ находится {someDocument|какой-то документ}.');
             end;
         end;
 
-        act = function(s)
+        act = function(this)
             if not disabled('jammedPaper') and disabled('mfpCover') then
                 enable('mfpCover');
                 return 'Осмотрев МФУ, сбоку я обнаружил крышку.';
-            elseif lookup('someDocument', s) ~= nil then
+            elseif lookup('someDocument', this) ~= nil then
                 walkin('mfuPanel');
                 return;
             else
@@ -103,10 +103,10 @@ room {
             end;
         end;
 
-        used = function(s, w)
+        used = function(this, w)
             if w.nam == 'someDocument' then
                 p('Я поместил ' .. w.disp .. ' внутрь МФУ на стекло сканера.');
-                place(w, s);
+                place(w, this);
             else
                 p(rndItem({
                     'Хотите ' .. w.verb .. ' МФУ? Хм... ну не знаю, не знаю...',
@@ -120,7 +120,7 @@ room {
             nam = '#lock';
             disp = 'защелка';
 
-            act = function(s)
+            act = function(this)
                 p 'Я нажал на защелку, крышка открылась.';
                 _'mfpCover'.opened = true;
             end;
@@ -132,17 +132,17 @@ room {
             opened = false;
 
             -- TODO
-            dsc = function(s)
-                if s.opened then
+            dsc = function(this)
+                if this.opened then
                     return '{Крышка} МФУ открыта. Внутри МФУ выделяется один {screw|болт}, который держит механизм.';
                 else
                     return '{Крышка} МФУ закрыта. Она защелкивается на {#lock|защелку}.';
                 end;
             end;
 
-            act = function(s)
-                if s.opened then
-                    s.opened = false;
+            act = function(this)
+                if this.opened then
+                    this.opened = false;
                     return 'Я захлопнул крышку';
                 else
                     return 'Крышка закрыта.';
@@ -154,7 +154,7 @@ room {
             nam = 'screw';
             disp = 'болт';
 
-            act = function(s)
+            act = function(this)
                 if _'mfpCover'.fixed then
                     return 'Отрегулированный болт, может быть теперь бумага не будет зажевываться.';
                 else
@@ -162,7 +162,7 @@ room {
                 end;
             end;
 
-            used = function(s, w)
+            used = function(this, w)
                 if w.nam == 'turn_screw' then
                     if (_'mfpCover'.fixed) then
                         return 'Я уже отрегулировал болт, лучше к нему теперь не лезть.';
@@ -182,14 +182,14 @@ room {
         obj {
             nam = 'jammedPaper';
             disp = 'смятый лист';
-            dsc = function(s)
+            dsc = function(this)
                 if _'mfpCover'.opened and not disabled('mfpCover') then
                     return 'В механизме виден смятый {лист бумаги}.';
                 end;
             end;
 
-            act = function(s)
-                disable(s);
+            act = function(this)
+                disable(this);
                 return 'Я вытащил помятый лист из механизма';
             end;
         }:disable();
@@ -222,12 +222,16 @@ room {
     obj {
         nam = 'hp_lj_1300';
         disp = 'принтер';
-        act = [[Принтер HP LJ 1300, старенький, но работает]];
+        act = function(this)
+            p 'Принтер HP LJ 1300, старенький, но работает.';
+            if where('weatherPaper').nam == 'hp_lj_1300' then
+                p 'В принтере лежит {weatherPaper|распечатка погоды}.';
+            end;
+        end;
     }:with {
         obj {
             nam = 'weatherPaper';
             disp = 'распечатка погоды';
-            dsc = 'В принтере лежит {распечатка погоды}.';
             
             src = '';
             place = '';
@@ -246,7 +250,7 @@ room {
     disp = 'Конец коридора';
     dsc = [[Это самый конец коридора.]];
 
-    enter = function(s,f)
+    enter = function(this,f)
         if f.name == 'lobby_middle' then
             return 'Я перешел в конец коридора.';
         else
@@ -266,8 +270,22 @@ room {
     nam = 'cab7';
     disp = 'Кабинет №7';
     dsc = 'Тут заседают логисты, и еще тут часто рубятся в ирушки';
+    decor = 'У логистов часто тусуется {petrovich|Петрович}.';
     enter = 'Я вошел в кабинет № 7';
+    
     way = {'lobby_end'};
+}:with {
+    obj {
+        nam = 'petrovich';
+        act = function()
+            if triggers.mainTask then
+                walkin('petrDlg');
+            else
+                p 'Это наш завхоз Петрович.';
+                p 'Петрович у нас отвечает за электрику, отопление ну и всё в таком духе.';
+            end;
+        end;
+    };
 };
 
 room {
@@ -332,7 +350,14 @@ room {
     };
     obj {
         nam = 'МиниАТС';
-        act = 'Мини-АТС, сюда подключены все телефонные аппараты фирмы, а также 3 городские линии.';
+        act = function()
+            p 'Мини-АТС, сюда подключены все телефонные аппараты фирмы, а также 3 городские линии.';
+            if triggers.mainTask then
+                p 'Я вижу свободный конец {cable|кабеля}, который ни к чему не подключен.';
+            end;
+        end;
+        
+        obj = {'cable'};
     };
     obj {
         nam = 'Свитчи';
@@ -340,7 +365,7 @@ room {
     };
     obj {
         nam = 'Автомат';
-        act = function(s)
+        act = function(this)
             return rndItem({
                 'Можно конечно поотрубать свет в каких-то отделах, но боюсь меня за это не похвалят.',
                 'Таки напросимся на неприятности, со своими шуточками.',
@@ -350,7 +375,7 @@ room {
     };
     obj {
         nam = 'Отопление';
-        act = function(s)
+        act = function(this)
             return rndItem({
                 'Лучше не трогать этот страшный девайс.',
                 'А что, может отопление отключим? Гыыы ))',
@@ -365,7 +390,7 @@ room {
     disp = 'Середина коридора';
     dsc = [[Я стою посреди коридора, передо мной множество дверей.]];
 
-    enter = function(s,f)
+    enter = function(this,f)
         if f.nam == 'lobby_end' or f.nam == 'lobby_start' then
             return 'Я прошел вдоль по коридору.';
         else
@@ -414,7 +439,7 @@ room {
     obj {
         nam = 'МФУ';
         act = 'МФУ Kyocera TaskAlfa 180 формата А3, японская, как видно из названия :)';
-        used = function(s, w)
+        used = function(this, w)
             if w.nam == 'someDocument' then
                 p 'Тонер закончился, так что снять копию не получится.';
             else
@@ -433,14 +458,13 @@ room {
     dsc = 'Кабинет директора, тоже очень главный!! отсюда часто доносятся громкие крики...';
     decor = [[За крутым директорским столом, на крутом кожаном кресле сидит наш директор -- {principal|Михалыч}]];
     onexit = function()
-        if achives.weather and not trigger.mainTask then
+        if achievs.weather and not triggers.mainTask then
             p 'Подожди не уходи! Есть еще кое что!';
-            trigger.mainTask = true;
             return false;
         end;
     end;
     
-    onenter = function(s, w)
+    onenter = function(this, w)
         if have('weatherPaper') == nil then
             p 'Это кабинет директора, лучше туда не заходить просто так.'
             return false;
@@ -456,14 +480,15 @@ room {
         nam = 'principal';
         disp = 'Директор';
         act = function()
-            if trigger.mainTask then
+            if achievs.weather and not triggers.mainTask then
                 walkin('mainTaskDlg');
+                triggers.mainTask = true;
             else
                 p 'Нужна веская причина чтобы отвлекать директора.';
             end;
         end;
         
-        used = function(s, w)
+        used = function(this, w)
             if w.nam == 'weatherPaper' then
                 walkin('weatherDlg');
             else
@@ -486,7 +511,7 @@ room {
     disp = 'Начало коридора';
     dsc = [[Тут начинается коридор и видно несколько дверей.]];
 
-    enter = function(s,f)
+    enter = function(this,f)
         if f.nam == 'lobby_middle' then
             return 'Я перешел в начало коридора.';
         elseif f.nam == 'porch' then
@@ -594,7 +619,7 @@ room {
     obj {
         nam = 'vegaFood';
 
-        act = function(s)
+        act = function(this)
             if not triggers.dirtyHands then
                 achievs.eat = true;
                 triggers.wantToEat = false;
@@ -610,14 +635,18 @@ room {
     obj {
         nam = 'еда';
         act = function()
-            return rndItem({
-                'Я уже 5 лет как вегетарианец злой, с каждой ЗП я покупаю курицу и отпускаю ее на волю!',
-                'Не ем я такое, нельзя мне.',
-                "I just don't eat meat",
-                'Я, просто, не ем мясо - это нормально..',
-                'Я вегетарианец, кстати, прекрасно себя чувствую! А вы нет? Это все из-за мяса! :)',
-                'Некоторые люди почему-то не едят мясо, так вот, я как раз один из них )'
-            });
+            if achievs.eat then
+                p 'Я уже поел.';
+            else
+                return rndItem({
+                    'Я уже 5 лет как вегетарианец злой, с каждой ЗП я покупаю курицу и отпускаю ее на волю!',
+                    'Не ем я такое, нельзя мне.',
+                    "I just don't eat meat",
+                    'Я, просто, не ем мясо - это нормально..',
+                    'Я вегетарианец, кстати, прекрасно себя чувствую! А вы нет? Это все из-за мяса! :)',
+                    'Некоторые люди почему-то не едят мясо, так вот, я как раз один из них )'
+                });
+            end;
         end;
     };
 };
@@ -647,19 +676,19 @@ room {
         nam = '#wckey';
         disp = 'ключ';
 
-        dsc = function(s)
-            if s:closed() then
+        dsc = function(this)
+            if this:closed() then
                 p 'Дверь закрыта.';
             else
                 p 'Дверь открыта.';
             end;
         end;
 
-        act = function(s)
-            if s:closed() then
-                s:open();
+        act = function(this)
+            if this:closed() then
+                this:open();
             else
-                s:close()
+                this:close()
             end;
             return 'Я поворачиваю ключ.';
         end;
@@ -691,19 +720,19 @@ room {
         nam = '#wckey';
         disp = 'ключ';
 
-        dsc = function(s)
-            if s:closed() then
+        dsc = function(this)
+            if this:closed() then
                 p 'Дверь закрыта.';
             else
                 p 'Дверь открыта.';
             end;
         end;
 
-        act = function(s)
-            if s:closed() then
-                s:open();
+        act = function(this)
+            if this:closed() then
+                this:open();
             else
-                s:close()
+                this:close()
             end;
             return 'Я поворачиваю ключ.';
         end;
@@ -716,7 +745,7 @@ room {
     dsc = 'Это можно назвать подъездом, тут ничего интересного';
     decor = [[Слева расположены {#ступеньки|ступеньки}, ведущие наверх.]];
 
-    enter = function(s,f)
+    enter = function(this,f)
         if f.nam == 'main_enter' then
             return 'Я вошел в здание';
         else
@@ -794,7 +823,7 @@ room {
 }:with {
     obj {
         nam = 'Жанна';
-        act = 'TODO';
+        act = pfn(walkin, 'jannaDlg');
     }
 };
 
@@ -816,8 +845,47 @@ room {
 
     obj {
         nam = 'въезд';
-        act = 'Рабочий день еще не закончился, домой уходить рано!';
+        act = function()
+            if achievs.main then
+                if triggers.romantic then
+                    achievs.romantic = true;
+                    updateStat(achievs);
+                    walk('romantic_end');
+                else
+                    walk('casual_end');
+                end;
+            else
+                p 'Рабочий день еще не закончился, домой уходить рано!';
+            end;
+        end;
     };
+};
+
+room {
+    nam = 'romantic_end';
+    disp = 'Вечерняя прогулка с девушкой';
+    dsc = [[Ну вот и закончен долгий рабочий день!^
+        Мы стоим с Катей на берегу и смотрим на закат.^^
+        
+        Надеюсь Вам было интересно!^
+        Спасибо Петру Косых за идею и реализацию движка.^^
+        И спасибо Вам, за прохождение!
+    ]];
+};
+
+room {
+    nam = 'casual_end';
+    disp = 'Конец рабочего дня';
+    dsc = [[Ну вот и закончен очередной рабочий день! 
+        Не каждый день приходилось лазать по крышам и чердакам, на самом деле, 
+        это вообще был единственный раз, но квест был еще тот! ^
+        Примерно в то же время я узнал о существовании INSTEAD и решил попробовать запилить на нем свою игру.
+        Чтобы не заморачиваться с сюжетом, я считерил - просто взял свой, не самый обычный, рабочий день, и ничего придумывать уже не надо было! ).^
+        Но процесс написания затянулся у меня на много лет... 
+        Надеюсь Вам было интересно!^
+        Спасибо Петру Косых за идею и реализацию движка.^^
+        И спасибо Вам, за прохождение!
+    ]];
 };
 
 room {
