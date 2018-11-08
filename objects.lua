@@ -31,30 +31,32 @@ obj {
     selector = 1;
     last_time = 0;
     
-    selections = {
-        [1] = function()
-            walkin('kateDlg');
-        end;
-        
-        [2] = function()
-            walkin('principalDlg_1');
-            triggers.weather = true;
-        end;
-        
-        [3] = function()
-            local pos = string.sub(where('player').nam, -1);
-            dprint('My pos ' .. pos);
-            local exclude_rooms = {};
-            where('badpc', exclude_rooms);
-            table.insert(exclude_rooms, 2);
-            table.insert(exclude_rooms, pos);
-            local cab = rndExcept(8, exclude_rooms);
+    {
+        selections = {
+            [1] = function()
+                walkin('kateDlg');
+            end;
             
-            _'badPcDlg'.number = cab;
-            walkin('badPcDlg');
-            _('cab' .. cab).obj:add('badpc');
-        end;
-        
+            [2] = function()
+                walkin('principalDlg_1');
+                triggers.weather = true;
+            end;
+            
+            [3] = function()
+                local pos = string.sub(where('player').nam, -1);
+                dprint('My pos ' .. pos);
+                local exclude_rooms = {};
+                where('badpc', exclude_rooms);
+                table.insert(exclude_rooms, 2);
+                table.insert(exclude_rooms, pos);
+                local cab = rndExcept(8, exclude_rooms);
+                
+                _'badPcDlg'.number = cab;
+                walkin('badPcDlg');
+                _('cab' .. cab).obj:add('badpc');
+            end;
+            
+        };
     };
 
     life = function(this)
@@ -239,7 +241,7 @@ obj {
             remove('cable');
             remove('landline_phone');
         else
-            'Сюда такой кабель не подключишь.'
+            p 'Сюда такой кабель не подключишь.'
         end;
     end;
 };

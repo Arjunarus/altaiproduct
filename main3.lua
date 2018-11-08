@@ -78,6 +78,7 @@ global {
         needCopy = false;
         romantic = false;
         mainTask = true; -- true for debug purpose TODO change into false
+        seenStockLine = false;
         openTechFloor = false;
     };
     
