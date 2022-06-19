@@ -10,38 +10,38 @@ fmt.para = true
 -- Defaults
 
 rndItem = function(table)
-    return table[rnd(#table)];
-end;
+    return table[rnd(#table)]
+end
 
 inList = function(item, list)
     for ind, val in ipairs(list) do
         if val == item then
-            return true;
-        end;
-    end;
+            return true
+        end
+    end
     
-    return false;
-end;
+    return false
+end
 
 rndExcept = function(max, exceptions)
-    local res = 0;
+    local res = 0
     repeat
-        res = rnd(max);
-    until not inList(res, exceptions);
+        res = rnd(max)
+    until not inList(res, exceptions)
     
-    return res;
-end;
+    return res
+end
 
 updateStat = function(statTable)
-    local res = 0;
+    local res = 0
     for key, value in pairs(statTable) do
         if value == true then 
-            res = res + 1; 
-        end;
-    end;
+            res = res + 1
+        end
+    end
     
-    statTable.count = res;
-end;
+    statTable.count = res
+end
 
 game.act = 'Ничего не происходит';
 
@@ -53,8 +53,8 @@ game.inv = function(s,w)
         'Симпатичная вещица, не так ли?',
         'Забавная штука.',
         'Куда бы это применить?'
-    });
-end;
+    })
+end
 
 game.use = function(s,w)
     return rndItem({
@@ -67,8 +67,8 @@ game.use = function(s,w)
         'И чем нам тут поможет ' .. w.disp .. '?',
         'Можно конечно ' .. w.verb .. ', хм... думаете поможет?',
         'Лишь бы все ' .. w.verb .. '!'
-    });
-end;
+    })
+end
 
 global {
     triggers = {
@@ -92,7 +92,7 @@ global {
         romantic = false,
         main = false
     };
-};
+}
 
 include "objects"
 include "rooms"
@@ -100,10 +100,10 @@ include "dialogs"
 
 -- Load saved state
 function start(load)
-end;
+end
 
 function init()
     -- TODO
-end;
+end
 
 

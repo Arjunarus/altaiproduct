@@ -4,9 +4,9 @@ require "string"
 stat {
     nam = 'status';
     disp = function()
-        pn('Достижения: ' .. achievs.count);
+        pn('Достижения: ' .. achievs.count)
     end;
-};
+}
 
 obj {
     nam = 'mobile';
@@ -15,15 +15,15 @@ obj {
     tak = 'Я взял мобильник.';
     inv = function(this)
         if this.calling then
-            this.selections[this.selector]();
+            this.selections[this.selector]()
             if this.selector < #this.selections then
-                this.selector = this.selector + 1;
-            end;
-            this.last_time = time();
-            this.calling = false;
+                this.selector = this.selector + 1
+            end
+            this.last_time = time()
+            this.calling = false
         else
-            p 'Это мой мобильник Motorolla C650, старенький, такие уже давно не в моде.';
-        end;
+            p 'Это мой мобильник Motorolla C650, старенький, такие уже давно не в моде.'
+        end
     end;
     
     calling = false;
@@ -34,26 +34,26 @@ obj {
     {
         selections = {
             [1] = function()
-                walkin('kateDlg');
+                walkin('kateDlg')
             end;
             
             [2] = function()
-                walkin('principalDlg_1');
-                triggers.weather = true;
+                walkin('principalDlg_1')
+                triggers.weather = true
             end;
             
             [3] = function()
-                local pos = string.sub(where('player').nam, -1);
-                dprint('My pos ' .. pos);
-                local exclude_rooms = {};
-                where('badpc', exclude_rooms);
-                table.insert(exclude_rooms, 2);
-                table.insert(exclude_rooms, pos);
-                local cab = rndExcept(8, exclude_rooms);
+                local pos = string.sub(where('player').nam, -1)
+                dprint('My pos ' .. pos)
+                local exclude_rooms = {}
+                where('badpc', exclude_rooms)
+                table.insert(exclude_rooms, 2)
+                table.insert(exclude_rooms, pos)
+                local cab = rndExcept(8, exclude_rooms)
                 
-                _'badPcDlg'.number = cab;
-                walkin('badPcDlg');
-                _('cab' .. cab).obj:add('badpc');
+                _'badPcDlg'.number = cab
+                walkin('badPcDlg')
+                _('cab' .. cab).obj:add('badpc')
             end;
             
         };
@@ -64,21 +64,21 @@ obj {
             and this.selector <= #this.selections
             and rnd(time()) - this.last_time > this.CALL_INTERVAL 
         then
-            this.calling = true;
+            this.calling = true
         end;
         
         if this.calling then
-            p 'У меня звонит мобильник!';
+            p 'У меня звонит мобильник!'
         end;
         
         -- Enable hunger
         if not achievs.eat and rnd(time()) > this.CALL_INTERVAL * 1.5 then
-            triggers.wantToEat = true;
-        end;
+            triggers.wantToEat = true
+        end
         
         if triggers.wantToEat and rnd(time()) % 3 == 0 then
-            p 'Что-то я проголодался, надо бы поесть...';
-        end;
+            p 'Что-то я проголодался, надо бы поесть...'
+        end
     end;
 };
 
@@ -88,10 +88,10 @@ obj {
     dsc = 'Мне указывают на сломаный {комп} в кабинете.';
     act = function(this)
         -- TODO complex fixing
-        p 'Я починил комп';
-        achievs.fix = true;
-        updateStat(achievs);
-        remove('badpc');
+        p 'Я починил комп'
+        achievs.fix = true
+        updateStat(achievs)
+        remove('badpc')
     end;
     
     power = false;
@@ -108,40 +108,40 @@ obj {
     nam = 'box';
     disp = 'ящик стола';
     dsc = function (s)
-            p "Выдвижной {ящик} в столе";
+            p "Выдвижной {ящик} в столе"
             if s:closed() then
-                p "закрыт.";
+                p "закрыт."
             else
                 p "открыт."
                 if #objs(s) ~= 0 then
-                    p "В ящике лежит ";
+                    p "В ящике лежит "
                     local obj_names = {};
                     for i = 1, #objs(s), 1 do
                         local obj = objs(s)[i]
-                        table.insert(obj_names, string.format("{%s|%s}", obj.nam, obj.disp));
+                        table.insert(obj_names, string.format("{%s|%s}", obj.nam, obj.disp))
                     end;
-                    p(table.concat(obj_names, ', ') .. '.');
-                end;
-            end;
+                    p(table.concat(obj_names, ', ') .. '.')
+                end
+            end
     end;
     act = function (s)
             if s:closed() then
-                s:open();
-                p 'Я открыл ящик.';
+                s:open()
+                p 'Я открыл ящик.'
             else
-                s:close();
-                p 'Я закрыл ящик.';
-            end;
+                s:close()
+                p 'Я закрыл ящик.'
+            end
     end;
 
     used = function(s, f)
         if s:closed() then
-            p 'Ящик закрыт, если что.';
-            return false;
+            p 'Ящик закрыт, если что.'
+            return false
         else
             p 'Поместим-ка, пожалуй, это в ящик.'
-            place(f, s);
-        end;
+            place(f, s)
+        end
     end;
 
     obj =  {
@@ -206,7 +206,7 @@ obj {
     verb = 'поставить';
     tak = function()
         if triggers.mainTask then
-            p 'Пожалуй, мне он может понадобится. Я отсоединяю кабель и беру в руки аппарат.';
+            p 'Пожалуй, мне он может понадобится. Я отсоединяю кабель и беру в руки аппарат.'
         else
             p(rndItem({
                 'Если кому-то срочно понадобится сисадмин, он может вызвать его по внутреннему номеру.',
@@ -214,9 +214,9 @@ obj {
                 'Честно говоря, я местных локальных номеров еще не помню - недавно на работу устроился.',
                 'Можно попробовать набрать номер наугад и бросить трубку, но лучше не надо.',
                 'Внутренние номера, вроде, четырехзначные...'
-            }));
-            return false;
-        end;
+            }))
+            return false
+        end
     end;
     inv = 'Красный кнопочный телефон с трубкой. Такими пользовались, наверное, еще в СССР. Сзади разьем для кабеля RJ11.';
 };
@@ -236,13 +236,13 @@ obj {
     inv = 'Это стандартный телефонный кабель, с двумя коннекторами 6P4C.';
     use = function(this, that)
         if that^'landline_phone' then
-            p 'Я подсоединил кабель к телефону';
-            take('corded_phone');
-            remove('cable');
-            remove('landline_phone');
+            p 'Я подсоединил кабель к телефону'
+            take('corded_phone')
+            remove('cable')
+            remove('landline_phone')
         else
             p 'Сюда такой кабель не подключишь.'
-        end;
+        end
     end;
 };
 
@@ -260,12 +260,12 @@ obj {
     inv = 'Это номер арендодателя, его Жанна дала.';
     use = function(this, that)
         if that^'mobile' then
-            walkin('ownerDlg');
-            p 'Я не уверен, что этот человек мне поможет.'; -- WTF? Why do not see this string?
-            remove('owner_tel');
+            walkin('ownerDlg')
+            p 'Я не уверен, что этот человек мне поможет.' -- WTF? Why do not see this string?
+            remove('owner_tel')
         else
-            p 'Так на номер не позвонишь.';
-        end;
+            p 'Так на номер не позвонишь.'
+        end
     end;
 };
 
@@ -275,12 +275,11 @@ obj {
 
     act = function()
         if triggers.dirtyHands then
-            triggers.dirtyHands = false;
-            return 'Я вымыл руки.';
+            triggers.dirtyHands = false
+            return 'Я вымыл руки.'
         else
-            return 'Руки еще не замарались, зачем их так часто мыть?';
-        end;
-
+            return 'Руки еще не замарались, зачем их так часто мыть?'
+        end
     end,
 };
 
@@ -290,9 +289,9 @@ obj {
 
     act = function()
         if not _'#wckey':closed() then
-            return 'А вдруг кто-нибудь зайдет и увидит?';
+            return 'А вдруг кто-нибудь зайдет и увидит?'
         else
-            return 'Вообще-то, я пока не хочу в туалет';
-        end;
+            return 'Вообще-то, я пока не хочу в туалет'
+        end
     end;
 };

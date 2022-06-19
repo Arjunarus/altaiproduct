@@ -37,19 +37,17 @@ dlg {
             'google.com',
             function()
                 if triggers.weather and disabled('weatherPaper') then
-                    _'screen'.src = 'Google';
-                    push('#weather');
+                    _'screen'.src = 'Google'
+                    push('#weather')
                 else
                     return rndItem({
                         'Я зашел в гугл.',
                         'Ну и чего будем искать?',
                         'Надо ввести запрос. Хм..',
                         'Погоду лучше смотреть в яндексе.'
-                    });
+                    })
                 end
             end,
-
-
         },
         {
             always = true,
@@ -57,8 +55,8 @@ dlg {
 
             function()
                 if triggers.weather and disabled('weatherPaper') then
-                    _'screen'.src = 'Yandex';
-                    push('#weather');
+                    _'screen'.src = 'Yandex'
+                    push('#weather')
                 else
                     return rndItem({
                         'Я зашел в яндекс.',
@@ -79,8 +77,8 @@ dlg {
                 always = true,
                 'Погода в России.',
                 function()
-                    _'screen'.place = 'Россия';
-                    push('#actions');
+                    _'screen'.place = 'Россия'
+                    push('#actions')
                 end
             },
 
@@ -88,8 +86,8 @@ dlg {
                 always = true,
                 'Погода в Москве.',
                 function()
-                    _'screen'.place = 'Москва';
-                    push('#actions');
+                    _'screen'.place = 'Москва'
+                    push('#actions')
                 end
             },
 
@@ -97,8 +95,8 @@ dlg {
                 always = true,
                 'Погода в Новосибирске.',
                 function()
-                    _'screen'.place = 'Новосибирск';
-                    push('#actions');
+                    _'screen'.place = 'Новосибирск'
+                    push('#actions')
                 end
             },
 
@@ -106,8 +104,8 @@ dlg {
                 always = true,
                 'Погода в Барнауле.',
                 function()
-                    _'screen'.place = 'Барнаул';
-                    push('#actions');
+                    _'screen'.place = 'Барнаул'
+                    push('#actions')
                 end
             },
 
@@ -127,7 +125,7 @@ dlg {
                 'Посмотреть',
                 function()
                     if _'screen'.place == 'Барнаул' then
-                        p 'Я смотрю погоду, хмм... завтра будет тепло, можно будет погулять с Катей после работы.';
+                        p 'Я смотрю погоду, хмм... завтра будет тепло, можно будет погулять с Катей после работы.'
                     else
                         return rndItem({
                             'Не знаю зачем мне смотреть погоду хрен пойми где.. ну да ладно.',
@@ -135,19 +133,19 @@ dlg {
                             'Вроде обещают тепло.',
                             'Через 2 дня будет дождь.',
                             'Переменная облачность, без осадков.'
-                        });
-                    end;
+                        })
+                    end
                 end
             },
 
             {
                 'Распечатать',
                 function()
-                    p 'Я пускаю погоду на печать.';
-                    _'weatherPaper'.src = _'screen'.src;
-                    _'weatherPaper'.place = _'screen'.place;
-                    enable('weatherPaper');
-                    walkout();
+                    p 'Я пускаю погоду на печать.'
+                    _'weatherPaper'.src = _'screen'.src
+                    _'weatherPaper'.place = _'screen'.place
+                    enable('weatherPaper')
+                    walkout()
                 end
             },
 
@@ -160,7 +158,7 @@ dlg {
     };
 
     way = {'wplace'};
-};
+}
 
 dlg {
     nam = 'kateDlg';
@@ -169,10 +167,10 @@ dlg {
     noinv = true;
     exit = function()
         if triggers.romantik then
-            p 'Здорово, сегодня я буду гулять с девушкой после работы! :3';
+            p 'Здорово, сегодня я буду гулять с девушкой после работы! :3'
         else
-            p 'Надеюсь, я не сильно её обидел..';
-        end;
+            p 'Надеюсь, я не сильно её обидел..'
+        end
     end;
     
     phr = {
@@ -215,8 +213,8 @@ dlg {
                 {
                     'Да, давай на "Юности".',
                     function()
-                        p 'Ура! Буду ждать!';
-                        triggers.romantik = true;
+                        p 'Ура! Буду ждать!'
+                        triggers.romantik = true
                     end
                 }
             },
@@ -236,7 +234,7 @@ dlg {
             }
         }
     };
-};
+}
 
 dlg {
     nam = 'mainTaskDlg';
@@ -286,7 +284,7 @@ dlg {
             }
         }
     };
-};
+}
 
 dlg {
     nam = 'principalDlg_1';
@@ -303,7 +301,7 @@ dlg {
             }
         }
     };
-};
+}
 
 dlg {
     nam = 'weatherDlg';
@@ -322,26 +320,26 @@ dlg {
 
             'Да принес вот держите.',
             function()
-                p 'Хмм.. посмотрим.';
+                p 'Хмм.. посмотрим.'
 
                 if _'weatherPaper'.place == 'Барнаул' and _'weatherPaper'.src == 'Yandex' then
                     p 'Хорошо, то что надо, спасибо!'
-                    triggers.weather = false;
-                    achievs.weather = true;
-                    updateStat(achievs);
+                    triggers.weather = false
+                    achievs.weather = true
+                    updateStat(achievs)
                 elseif _'weatherPaper'.place == 'Новосибирск' then
-                    p 'Предлагаешь поехать в Новосибирск на выходные?';
+                    p 'Предлагаешь поехать в Новосибирск на выходные?'
                 elseif _'weatherPaper'.src ~= 'Yandex' then
-                    p 'Что-то я тут нифига не понимаю, распечатай нашу погоду из Яндекса и принеси мне!';
-                end;
+                    p 'Что-то я тут нифига не понимаю, распечатай нашу погоду из Яндекса и принеси мне!'
+                end
 
                 if _'weatherPaper'.place ~= 'Барнаул' then
-                    p 'Ты что, забыл в каком городе мы живем??';
-                end;
+                    p 'Ты что, забыл в каком городе мы живем??'
+                end
 
-                disable('weatherPaper');
+                disable('weatherPaper')
                 place('weatherPaper', 'hp_lj_1300')
-                walkout();
+                walkout()
             end
         },
 
@@ -350,7 +348,7 @@ dlg {
             'Ну давай быстрее!'
         }
     };
-};
+}
 
 dlg {
     nam = 'mfuPanel';
@@ -366,12 +364,12 @@ dlg {
 
             'Кнопка переключения режима.',
             function()
-                _'mfuPanel'.copyMode = not _'mfuPanel'.copyMode;
+                _'mfuPanel'.copyMode = not _'mfuPanel'.copyMode
                 if _'mfuPanel'.copyMode then
-                    p 'Режим работы: копирование';
+                    p 'Режим работы: копирование'
                 else
-                    p 'Режим работы: сканирование';
-                end;
+                    p 'Режим работы: сканирование'
+                end
             end,
         },
 
@@ -380,29 +378,29 @@ dlg {
 
             'Кнопка копирования.',
             function()
-                p 'Я нажал кнопку копирования...^^';
+                p 'Я нажал кнопку копирования...^^'
 
                 if not _'mfuPanel'.copyMode then
-                    p 'МФУ стоит в режиме сканирования. В этом режиме копии не снимаются.';
+                    p 'МФУ стоит в режиме сканирования. В этом режиме копии не снимаются.'
                 elseif _'mfpCover'.opened then
-                    p 'Крышка МФУ открыта, в этом состоянии он не будет работать';
+                    p 'Крышка МФУ открыта, в этом состоянии он не будет работать'
                 elseif not disabled('jammedPaper') then
-                    p 'Кажется внутри зажевана бумага, сначала надо ее вытащить.';
+                    p 'Кажется внутри зажевана бумага, сначала надо ее вытащить.'
                 elseif not _'mfpCover'.fixed then
-                    enable('jammedPaper');
-                    p 'Ну вот, МФУ зажевал бумагу. Он очень старый я ведь предупреждал!';
+                    enable('jammedPaper')
+                    p 'Ну вот, МФУ зажевал бумагу. Он очень старый я ведь предупреждал!'
                 else
-                    remove('someDocument');
+                    remove('someDocument')
                     _'mfpCover'.fixed = false -- Only one copy is possible after fixing
-                    achievs.copy = true;
-                    updateStat(achievs);
-                    disable('copyWoman');
-                    triggers.needCopy = false;
-                    p 'Ну все, кажется копия успешно снялась, УРА!';
-                end;
+                    achievs.copy = true
+                    updateStat(achievs)
+                    disable('copyWoman')
+                    triggers.needCopy = false
+                    p 'Ну все, кажется копия успешно снялась, УРА!'
+                end
 
-                walkout();
-            end;
+                walkout()
+            end
         },
 
         {
@@ -411,7 +409,7 @@ dlg {
             'Я настроил изображение получше. Хотя, вроде, и так было норм.'
         }
 	};
-};
+}
 
 
 dlg {
@@ -424,7 +422,7 @@ dlg {
     phr = {
         {
             cond = function()
-                return triggers.needCopy;
+                return triggers.needCopy
             end,
 
             'Вы все еще тут?',
@@ -433,7 +431,7 @@ dlg {
 
         {
             cond = function()
-                return not triggers.needCopy;
+                return not triggers.needCopy
             end;
 
             'Чем-то помочь?',
@@ -452,10 +450,10 @@ dlg {
 
                         function ()
                             p '"Но мне нужна копия и очень срочно!" - с этими словами сотрудница вручила мне какой-то документ.'
-                            take('someDocument');
-                            triggers.needCopy = true;
-                            walkout();
-                        end;
+                            take('someDocument')
+                            triggers.needCopy = true
+                            walkout()
+                        end
                     }
                 }
             },
@@ -466,13 +464,13 @@ dlg {
             }
         }
     };
-};
+}
 
 dlg {
     nam = 'badPcDlg';
     disp = 'Разговор по телефону';
     enter = function(this)
-        return 'Я снял трубку. Это звонят из кабинета ' .. this.number .. '.';
+        return 'Я снял трубку. Это звонят из кабинета ' .. this.number .. '.'
     end;
     exit = 'Отлично, теперь еще и комп надо чинить :(';
     noinv = true;
@@ -513,7 +511,7 @@ dlg {
             }
         }
     };
-};
+}
 
 dlg {
     nam = 'petrDlg';
@@ -551,7 +549,7 @@ dlg {
             }
         }
     };
-};
+}
 
 dlg {
     nam = 'jannaDlg';
@@ -574,7 +572,7 @@ dlg {
         
         {
             cond = function()
-                return triggers.mainTask and not have('owner_tel');
+                return triggers.mainTask and not have('owner_tel')
             end,
             
             only = true,
@@ -585,8 +583,8 @@ dlg {
             {
                 'О давай, конечно!',
                 function()
-                    p 'Зовут Татьяна.';
-                    take('owner_tel');
+                    p 'Зовут Татьяна.'
+                    take('owner_tel')
                 end,
                 
                 {
@@ -601,7 +599,7 @@ dlg {
             }
         }
     };
-};
+}
 
 dlg {
     nam = 'ownerDlg';
@@ -647,7 +645,7 @@ dlg {
             }
         }
     };
-};
+}
 
 dlg {
     nam = 'cookerDlg';
@@ -668,7 +666,7 @@ dlg {
             only = true,
 
             cond = function()
-                return triggers.wantToEat;
+                return triggers.wantToEat
             end,
 
             'А нельзя ли что-нибудь съесть?',
@@ -678,10 +676,10 @@ dlg {
                 'Но я же не ем мясное!',
 
                 function()
-                    p 'Ой, прости, сейчас что-нибудь придумаем...';
-                    enable('vegaFood');
-                    close('#hello');
-                end;
+                    p 'Ой, прости, сейчас что-нибудь придумаем...'
+                    enable('vegaFood')
+                    close('#hello')
+                end
             },
             {
                 'Спасибо!',
@@ -698,5 +696,4 @@ dlg {
             'На доброе здоровье!'
         }
     };
-
-};
+}
