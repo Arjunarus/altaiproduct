@@ -7,41 +7,9 @@ require "fmt"
 
 fmt.para = true
 
+include "utils"
+
 -- Defaults
-
-rndItem = function(table)
-    return table[rnd(#table)]
-end
-
-inList = function(item, list)
-    for ind, val in ipairs(list) do
-        if val == item then
-            return true
-        end
-    end
-    
-    return false
-end
-
-rndExcept = function(max, exceptions)
-    local res = 0
-    repeat
-        res = rnd(max)
-    until not inList(res, exceptions)
-    
-    return res
-end
-
-updateStat = function(statTable)
-    local res = 0
-    for key, value in pairs(statTable) do
-        if value == true then 
-            res = res + 1
-        end
-    end
-    
-    statTable.count = res
-end
 
 game.act = 'Ничего не происходит';
 
@@ -62,7 +30,7 @@ game.use = function(s,w)
         'Не пойму как это тут применить..',
         'Ну и причем тут ' .. w.disp .. '?',
         'Не срабатывает.',
-        'Врядли это можно ' .. w.verb,
+        'Вряд ли это можно ' .. w.verb,
         'Да вы что, это же ' .. w.disp .. '!',
         'И чем нам тут поможет ' .. w.disp .. '?',
         'Можно конечно ' .. w.verb .. ', хм... думаете поможет?',
