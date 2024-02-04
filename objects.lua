@@ -134,13 +134,15 @@ obj {
             end
     end;
 
-    used = function(s, f)
-        if s:closed() then
+    used = function(this, what)
+        if this:closed() then
             p 'Ящик закрыт, если что.'
             return false
-        else
+        elseif what.nam ~= 'mobile' then
             p 'Поместим-ка, пожалуй, это в ящик.'
-            place(f, s)
+            place(what, this)
+        else
+            p 'Мой мобильник должен быть всегда со мной.'
         end
     end;
 
@@ -218,7 +220,7 @@ obj {
             return false
         end
     end;
-    inv = 'Красный кнопочный телефон с трубкой. Такими пользовались, наверное, еще в СССР. Сзади разьем для кабеля RJ11.';
+    inv = 'Красный дисковый телефон с трубкой. Такими пользовались, наверное, еще в СССР. Сзади разьем для кабеля RJ11.';
 };
 
 obj {
@@ -232,7 +234,7 @@ obj {
 obj {
     nam = 'cable';
     disp = 'кабель';
-    tak = 'Я взял телефонный кабель';
+    tak = 'Я отключил кабель от АТС и взял его';
     inv = 'Это стандартный телефонный кабель, с двумя коннекторами 6P4C.';
     use = function(this, that)
         if that^'landline_phone' then

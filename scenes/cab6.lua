@@ -2,21 +2,26 @@ room {
     nam = 'cab6';
     disp = 'Кабинет №6';
     dsc = [[Это мой рабочий кабинет, но кроме меня тут еще сидят бухи и главбух.]];
-    decor = [[В кабинете стоит мой {стол|стол} с компьютером. Около главбуха стоит {hp_lj_1300|принтер}.
+    decor = [[В кабинете стоит мой {стол|рабочий стол} с компьютером. Около главбуха стоит {hp_lj_1300|принтер}.
         Рядом со столом стоит старое {mfp_1|МФУ Sharp}.
     ]];
 
-    enter = function(this, f)
-        if f.nam == 'wplace' then
-            return 'Я встал из-за стола.'
-        end
-        
+    enter = function(this, f)       
         -- Enable copy woman in 1 time from 5 entering
         if rnd(5) % 3 == 0 and not achievs.copy then
             enable('copyWoman')
         end
         
         return 'Я в кабинете № 6.'
+    end;
+    
+    onexit = function(this, where)
+        if disabled('copyWoman') or where.nam == 'wplace' then
+            return true
+        end
+        
+        p 'Я не могу сбежать от сотрудницы, пока не помогу ей с проблемой.'
+        return false
     end;
 
     way = {
@@ -46,14 +51,14 @@ room {
             end
         end;
 
-        used = function(this, w)
-            if w.nam == 'someDocument' then
-                p('Я поместил ' .. w.disp .. ' внутрь МФУ на стекло сканера.')
-                place(w, this)
+        used = function(this, what)
+            if what.nam == 'someDocument' then
+                p('Я поместил ' .. what.disp .. ' внутрь МФУ на стекло сканера.')
+                place(what, this)
             else
                 p(rndItem({
-                    'Хотите ' .. w.verb .. ' МФУ? Хм... ну не знаю, не знаю...',
-                    'Можно конечно ' .. w.verb .. ' МФУ, но непонятно что делать потом..'
+                    'Хотите ' .. what.verb .. ' МФУ? Хм... ну не знаю, не знаю...',
+                    'Можно конечно ' .. what.verb .. ' МФУ, но непонятно что делать потом..'
                 }))
             end
         end;
@@ -74,7 +79,6 @@ room {
             fixed = false;
             opened = false;
 
-            -- TODO
             dsc = function(this)
                 if this.opened then
                     return '{Крышка} МФУ открыта. Внутри МФУ выделяется один {screw|болт}, который держит механизм.'
@@ -105,8 +109,8 @@ room {
                 end
             end;
 
-            used = function(this, w)
-                if w.nam == 'turn_screw' then
+            used = function(this, what)
+                if what.nam == 'turn_screw' then
                     if (_'mfpCover'.fixed) then
                         return 'Я уже отрегулировал болт, лучше к нему теперь не лезть.';
                     end
@@ -115,8 +119,8 @@ room {
                     return 'Я подрегулировал болт, кажется теперь не должно зажевывать.'
                 else
                     p(rndItem({
-                        'Предлагаете ' .. w.verb .. ' болт? Мдя... его надо подрегулировать, а не ' .. w.verb .. '!',
-                        'Можно конечно ' .. w.verb .. ' болт, а что потом?'
+                        'Предлагаете ' .. what.verb .. ' болт? Мдя... его надо подрегулировать, а не ' .. what.verb .. '!',
+                        'Можно конечно ' .. what.verb .. ' болт, а что потом?'
                     }))
                 end
             end;
@@ -167,7 +171,7 @@ room {
         disp = 'принтер';
         act = function(this)
             p 'Принтер HP LJ 1300, старенький, но работает.'
-            if where('weatherPaper').nam == 'hp_lj_1300' then
+            if where('weatherPaper').nam == 'hp_lj_1300' and not disabled('weatherPaper') then
                 p 'В принтере лежит {weatherPaper|распечатка погоды}.'
             end
         end;
