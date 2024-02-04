@@ -30,7 +30,7 @@ game.use = function(s,w)
         'Не пойму как это тут применить..',
         'Ну и причем тут ' .. w.disp .. '?',
         'Не срабатывает.',
-        'Вряд ли это можно ' .. w.verb,
+        'Вряд ли это сейчас нужно ' .. w.verb,
         'Да вы что, это же ' .. w.disp .. '!',
         'И чем нам тут поможет ' .. w.disp .. '?',
         'Можно конечно ' .. w.verb .. ', хм... думаете поможет?',
@@ -63,7 +63,7 @@ global {
 }
 
 include "objects"
-include "rooms"
+include "scenes"
 include "dialogs"
 
 -- Load saved state
