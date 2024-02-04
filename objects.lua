@@ -27,7 +27,7 @@ obj {
     end;
     
     calling = false;
-    CALL_INTERVAL = 25;
+    CALL_INTERVAL = 100;
     selector = 1;
     last_time = 0;
     
