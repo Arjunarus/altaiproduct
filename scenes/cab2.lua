@@ -34,8 +34,8 @@ room {
             end
         end;
         
-        used = function(this, w)
-            if w.nam == 'weatherPaper' then
+        used = function(this, what)
+            if what.nam == 'weatherPaper' then
                 walkin('weatherDlg')
             else
                 return false
