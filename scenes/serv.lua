@@ -19,13 +19,14 @@ room {
     obj = {'tape'};
     way = {'cab8'};
 }:with {
-
+    'stock_line';
+    
     obj {
         nam = '#cords';
         act = function()
             if triggers.mainTask then
                 if triggers.seenStockLine then
-                    p 'Среди кучи одинаковых проводов я замечаю один {#stock_line|черный}, точно такой же я видел на складе.'
+                    p 'Среди кучи одинаковых проводов я замечаю один {stock_line|черный}, точно такой же я видел на складе.'
                 else
                     p 'Если бы я знал какой из них отвечает за склад...'
                 end
@@ -42,14 +43,6 @@ room {
                 end;
             }:disable();
         }
-    };
-    
-    
-    obj {
-        nam = '#stock_line';
-        act = function()
-            p 'Я отсоединяю ';
-        end;
     };
     
     obj {
