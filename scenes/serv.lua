@@ -64,7 +64,7 @@ room {
         nam = 'МиниАТС';
         act = function()
             p 'Мини-АТС, сюда подключены все телефонные аппараты фирмы, а также 3 городские линии.'
-            if triggers.mainTask and where('cable').nam == 'МиниАТС' then
+            if triggers.mainTask and where('cable') and where('cable').nam == 'МиниАТС' then
                 p 'Я вижу свободный конец {cable|кабеля}, который ни к чему не подключен.'
             end
         end;
